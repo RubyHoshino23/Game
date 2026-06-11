@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>20th Anniversary - Save the Princess!</title>
+<!-- GitHub Pages rebuild trigger -->
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #000; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; width: 100vw; height: 100vh; }
@@ -15,11 +16,1125 @@ canvas { display: block; }
   justify-content: flex-end; align-items: center; pointer-events: all;
   z-index: 100;
 }
-/* trimmed: full game HTML duplicated from root index.html */
+#vn-portrait {
+  position: absolute; bottom: 160px; left: 60px;
+  width: 160px; height: 200px; object-fit: cover; object-position: top;
+  border: 3px solid #fff; border-radius: 8px;
+  image-rendering: auto;
+}
+#vn-box {
+  width: 90%; max-width: 800px; background: rgba(10,10,30,0.97);
+  border: 2px solid #4af; border-radius: 10px;
+  padding: 20px 24px 20px 200px; margin-bottom: 40px; min-height: 110px;
+  position: relative; cursor: pointer;
+}
+#vn-name { color: #4af; font-size: 18px; font-weight: bold; margin-bottom: 8px; }
+#vn-text { color: #eee; font-size: 16px; line-height: 1.6; }
+#vn-continue { position: absolute; bottom: 10px; right: 16px; color: #4af; font-size: 12px; animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+#memory-flash {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  padding: 24px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.92); z-index: 200; pointer-events: none; opacity: 0;
+  transition: opacity 0.4s;
+}
+#memory-flash img { width: min(90vw, 920px); height: auto; max-height: 84vh; object-fit: contain; border: 4px solid gold; border-radius: 10px; margin-bottom: 20px; }
+#memory-flash .mem-label { color: gold; font-size: 30px; letter-spacing: 3px; text-transform: uppercase; }
+#power-flash {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(255,200,0,0.18); z-index: 200; pointer-events: none; opacity: 0;
+  transition: opacity 0.4s;
+}
+#power-flash .pf-text { color: #ff0; font-size: 32px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 20px #f80; text-align: center; }
+#hud {
+  position: absolute; top: 12px; left: 0; width: 100%;
+  display: flex; justify-content: space-between; padding: 0 20px;
+  pointer-events: none; z-index: 50;
+}
+.hud-item { font-size: 15px; color: #fff; }
+.hud-item span { color: #4af; }
+#lives-display { display: flex; gap: 6px; align-items: center; }
+.heart { color: #f44; font-size: 18px; }
+#bomb-display { display: flex; gap: 4px; align-items: center; }
+.bomb-icon { width: 16px; height: 16px; background: #fc0; border-radius: 50%; display: inline-block; }
+#miracle-bar-wrap {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  width: 300px; pointer-events: none; z-index: 50;
+}
+#miracle-bar-bg { background: #222; border: 1px solid #4af; border-radius: 8px; height: 14px; width: 100%; }
+#miracle-bar { background: linear-gradient(90deg,#4af,#0ff); height: 100%; border-radius: 8px; width: 0%; transition: width 0.3s; }
+#miracle-label { color: #4af; font-size: 11px; text-align: center; margin-top: 2px; letter-spacing: 1px; }
+#miracle-active-flash {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 150; opacity: 0; background: rgba(0,200,255,0.08);
+  transition: opacity 0.3s;
+}
+#bomb-vn {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  background: rgba(0,10,30,0.96); border-top: 2px solid #0ff;
+  padding: 14px 20px 14px 180px; min-height: 90px;
+  z-index: 180; display: none; pointer-events: all; cursor: pointer;
+}
+#bomb-vn-portrait {
+  position: absolute; bottom: 0; left: 20px; width: 140px; height: 140px;
+  object-fit: cover; object-position: top; border: 2px solid #0ff; border-radius: 8px 8px 0 0;
+}
+#bomb-vn-name { color: #0ff; font-size: 15px; font-weight: bold; margin-bottom: 4px; }
+#bomb-vn-text { color: #ddf; font-size: 14px; line-height: 1.5; }
+#end-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: #000; display: none; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 300;
+}
+#end-screen h1 { font-size: 38px; color: gold; text-align: center; letter-spacing: 3px; margin-bottom: 18px; text-shadow: 0 0 30px #fa0; }
+#end-screen .end-sub { color: #fff; font-size: 20px; text-align: center; letter-spacing: 1px; }
+#end-screen img { max-width: 200px; border-radius: 50%; border: 4px solid gold; margin: 20px; }
+#end-hearts { font-size: 36px; animation: hpulse 1s infinite; margin-top: 10px; }
+@keyframes hpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+/* Music Player */
+#music-player {
+  display: none;
+  margin-top: 22px;
+  background: rgba(10,10,30,0.95);
+  border: 2px solid gold;
+  border-radius: 12px;
+  padding: 14px 22px;
+  min-width: 320px;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 0 24px rgba(255,200,0,0.3);
+}
+#music-player .mp-title {
+  color: gold;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+#music-player .mp-track {
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#music-player .mp-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+#mp-play-btn {
+  background: gold;
+  border: none;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #000;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+  font-family: 'Courier New', monospace;
+}
+#mp-play-btn:hover { background: #ffe066; transform: scale(1.08); }
+#mp-vol-wrap { display: flex; align-items: center; gap: 6px; }
+#mp-vol-wrap label { color: #aaa; font-size: 12px; }
+#mp-volume { width: 80px; accent-color: gold; }
+#mp-progress-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#mp-progress {
+  flex: 1;
+  height: 4px;
+  accent-color: gold;
+  cursor: pointer;
+}
+#mp-time { color: #aaa; font-size: 11px; white-space: nowrap; min-width: 80px; text-align: right; }
+#mp-note { color: #aaa; font-size: 11px; margin-top: 6px; }
+@keyframes mpFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+#music-player.visible { display: block; animation: mpFadeIn 0.6s ease; }
+#diff-select {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 400; gap: 18px;
+}
+#diff-select h2 { color: #4af; font-size: 28px; letter-spacing: 2px; margin-bottom: 10px; }
+.diff-btn {
+  padding: 12px 40px; font-size: 18px; font-family: 'Courier New', monospace;
+  border: 2px solid #4af; background: transparent; color: #4af;
+  cursor: pointer; border-radius: 6px; letter-spacing: 2px; transition: all 0.2s;
+}
+.diff-btn:hover { background: #4af; color: #000; }
+#game-container { width: 100vw; height: 100vh; position: relative; }
 </style>
 </head>
 <body>
-<p>This is a copy of the game index placed into /docs to trigger GitHub Pages when served from /docs.</p>
-<p>If you see this, open <a href="/index.html">root index</a>.</p>
+<div id="game-container">
+  <canvas id="gameCanvas"></canvas>
+  <div id="ui">
+    <div id="hud" style="display:none">
+      <div class="hud-item">SCORE: <span id="score-display">0</span></div>
+      <div id="lives-display"></div>
+      <div id="bomb-display">
+        MIRACLE: <span id="bomb-count">3</span> &nbsp;[Z]
+      </div>
+    </div>
+    <div id="miracle-bar-wrap" style="display:none">
+      <div id="miracle-bar-bg"><div id="miracle-bar"></div></div>
+      <div id="miracle-label">MIRACLE POWER</div>
+    </div>
+  </div>
+  <div id="miracle-active-flash"></div>
+
+  <!-- Visual Novel Overlay -->
+  <div id="vn-overlay" style="display:none">
+    <img id="vn-portrait" src="" alt="">
+    <div id="vn-box">
+      <div id="vn-name"></div>
+      <div id="vn-text"></div>
+      <div id="vn-continue">▼ Click to continue</div>
+    </div>
+  </div>
+
+  <!-- Memory Flash -->
+  <div id="memory-flash">
+    <img id="mem-img" src="" alt="">
+    <div class="mem-label">Memory Acquired!</div>
+  </div>
+
+  <!-- Power Flash -->
+  <div id="power-flash">
+    <div class="pf-text" id="pf-text"></div>
+  </div>
+
+  <!-- Bomb / Assist VN -->
+  <div id="bomb-vn">
+    <img id="bomb-vn-portrait" src="" alt="">
+    <div id="bomb-vn-name">Miracle</div>
+    <div id="bomb-vn-text">"Arrived from future, miracle help!"</div>
+  </div>
+
+  <!-- Difficulty Select -->
+  <div id="diff-select" style="display:none">
+    <h2>SELECT DIFFICULTY</h2>
+    <button class="diff-btn" onclick="startGame('easy')">EASY</button>
+    <button class="diff-btn" onclick="startGame('normal')">NORMAL</button>
+    <button class="diff-btn" onclick="startGame('hard')">HARD</button>
+    <button class="diff-btn" onclick="startGame('lunatic')">LUNATIC</button>
+  </div>
+
+  <!-- End Screen -->
+  <div id="end-screen">
+    <h1>Happy 20th Anniversary!</h1>
+    <div style="display:flex; gap:20px; align-items:center; margin:10px 0">
+      <img id="end-img1" src="" alt="">
+      <div id="end-hearts">❤️❤️❤️</div>
+      <img id="end-img2" src="" alt="">
+    </div>
+    <div class="end-sub">You saved her. You always do.</div>
+    <div class="end-sub" style="margin-top:8px; color:#aaa; font-size:14px">Thank you for 20 years of love.</div>
+  </div>
+</div>
+
+<div id="music-player">
+  <div class="mp-title">♪ Now Playing</div>
+  <div class="mp-track">9-33. Canto IX Boss 6 Battle Theme.mp3</div>
+  <div class="mp-controls">
+    <button id="mp-play-btn" title="Play/Pause">▶</button>
+    <div id="mp-vol-wrap">
+      <label>VOL</label>
+      <input type="range" id="mp-volume" min="0" max="1" step="0.01" value="0.7">
+    </div>
+  </div>
+  <div class="mp-progress-wrap">
+    <input type="range" id="mp-progress" min="0" max="100" step="0.1" value="0">
+    <span id="mp-time">0:00 / 0:00</span>
+  </div>
+  <div id="mp-note">Place the .mp3 file in the same folder as this game.</div>
+</div>
+<audio id="mp-audio" src="9-33. Canto IX Boss 6 Battle Theme.mp3" preload="auto"></audio>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// --- Image loading ---
+const imgs = {};
+const imgFiles = {
+  main: 'Main Character.jpg',
+  second: 'SecondMainCharacter.jpg',
+  assist: 'Assist.jpg',
+  princess: 'Princess.jpg',
+  enemy: 'Enemy.png',
+  mem1: 'Memory1.jpg',
+  mem2: 'Memory2.jpg',
+  mem3: 'Memory3.jpg',
+  mem4: 'memory4.jpg',
+};
+let imgsLoaded = 0;
+let totalImgs = Object.keys(imgFiles).length;
+for (const [key, file] of Object.entries(imgFiles)) {
+  imgs[key] = new Image();
+  imgs[key].onload = () => { imgsLoaded++; if (imgsLoaded >= totalImgs) onAllImagesLoaded(); };
+  imgs[key].onerror = () => { imgsLoaded++; if (imgsLoaded >= totalImgs) onAllImagesLoaded(); };
+  imgs[key].src = file;
+}
+
+// --- Game State ---
+let gameState = 'loading'; // loading, vn, diffSelect, playing, memory, boss_vn, end
+let difficulty = 'normal';
+let score = 0;
+let lives = 3;
+let bombs = 3;
+let memoriesCollected = 0;
+const TOTAL_MEMORIES = 4;
+let bossDefeated = false;
+const MINI_BOSS_SCORE_THRESHOLDS = [1000, 2000, 3000, 4000];
+const FINAL_BOSS_SCORE = 5000;
+let miraclePower = 0; // 0-100
+let miracleActive = false;
+let miracleTimer = 0;
+let powerMultiplier = 1;
+let playerPowered = false;
+
+// --- Player ---
+const player = {
+  x: 0, y: 0, w: 40, h: 50,
+  speed: 5, focusSpeed: 2.5,
+  bullets: [], iframes: 0,
+  img: null
+};
+
+// --- Input ---
+const keys = {};
+window.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if (e.key === 'z' || e.key === 'Z') useBomb();
+  if (e.key === 'Shift') player.focusing = true;
+});
+window.addEventListener('keyup', e => {
+  keys[e.key] = false;
+  if (e.key === 'Shift') player.focusing = false;
+});
+
+// --- Enemies ---
+let enemies = [];
+let enemyBullets = [];
+let miniBossActive = false;
+let bossActive = false;
+let boss = null;
+let miniBossIndex = 0;
+const MINIBOSS_SCORES = [200, 400, 700, 1000];
+
+// --- Particles ---
+let particles = [];
+
+// Spawn wave timers
+let waveTimer = 0;
+let waveInterval = 180;
+let bossSpawnReady = false;
+
+// --- VN Script ---
+const vnScript = [
+  { portrait: 'second', name: 'Ehrnest', text: 'Dad! Wake up! Mom has been captured!' },
+  { portrait: 'second', name: 'Ehrnest', text: 'I am running out of power... take this and save her.' },
+  { portrait: null, name: '', text: '* Ehrnest\'s power and Miracle\'s power have been acquired! *', action: 'powerFlash1' },
+  { portrait: 'second', name: 'Ehrnest', text: 'Goo...d luck...' },
+  { portrait: null, name: '', text: '* Ehrnest fades away... *', action: 'fadeEhrnest' },
+];
+let vnIndex = 0;
+let vnCallback = null;
+
+// --- Memory Queue ---
+const memImages = ['mem1', 'mem2', 'mem3', 'mem4'];
+let memQueue = [...memImages];
+
+function onAllImagesLoaded() {
+  player.x = canvas.width / 2;
+  player.y = canvas.height - 100;
+  document.getElementById('end-img1').src = imgs.main.src;
+  document.getElementById('end-img2').src = imgs.princess.src;
+  startVN();
+}
+
+// --- VN System ---
+function startVN() {
+  gameState = 'vn';
+  vnIndex = 0;
+  showVNStep();
+}
+
+function showVNStep() {
+  if (vnIndex >= vnScript.length) {
+    endVN();
+    return;
+  }
+  const step = vnScript[vnIndex];
+  const overlay = document.getElementById('vn-overlay');
+  overlay.style.display = 'flex';
+  const portrait = document.getElementById('vn-portrait');
+  if (step.portrait && imgs[step.portrait]) {
+    portrait.src = imgs[step.portrait].src;
+    portrait.style.display = 'block';
+  } else {
+    portrait.style.display = 'none';
+  }
+  document.getElementById('vn-name').textContent = step.name;
+  document.getElementById('vn-text').textContent = step.text;
+  if (step.action === 'powerFlash1') {
+    showPowerFlash('Ehrnest\'s Power Acquired!\nMiracle\'s Power Acquired!', 2000);
+  }
+}
+
+function advanceVN() {
+  if (gameState !== 'vn') return;
+  const step = vnScript[vnIndex];
+  if (step && step.action === 'fadeEhrnest') {
+    vnIndex++;
+    endVN();
+    return;
+  }
+  vnIndex++;
+  if (vnIndex >= vnScript.length) { endVN(); return; }
+  showVNStep();
+}
+
+document.getElementById('vn-overlay').addEventListener('click', advanceVN);
+
+function endVN() {
+  document.getElementById('vn-overlay').style.display = 'none';
+  document.getElementById('music-player').classList.add('visible');
+  attemptMusicStart();
+  showDiffSelect();
+}
+
+function showDiffSelect() {
+  gameState = 'diffSelect';
+  document.getElementById('diff-select').style.display = 'flex';
+}
+
+window.startGame = function(diff) {
+  difficulty = diff;
+  document.getElementById('diff-select').style.display = 'none';
+  gameState = 'playing';
+  document.getElementById('hud').style.display = 'flex';
+  document.getElementById('miracle-bar-wrap').style.display = 'block';
+  applyDifficulty();
+  updateHUD();
+  requestAnimationFrame(gameLoop);
+  const playerElement = document.getElementById('music-player');
+  playerElement.classList.add('visible');
+  playerElement.style.display = 'block';
+  if (mpAudio) {
+    mpAudio.src = encodeURI('9-33. Canto IX Boss 6 Battle Theme.mp3');
+    mpAudio.load();
+  }
+  attemptMusicStart();
+  showPowerFlash('Stage Start!\n[Z] = Miracle Bomb\n[Shift] = Focus', 2500);
+}
+
+function applyDifficulty() {
+  switch(difficulty) {
+    case 'easy': player.speed = 6; waveInterval = 240; break;
+    case 'normal': player.speed = 5; waveInterval = 180; break;
+    case 'hard': player.speed = 4.5; waveInterval = 130; break;
+    case 'lunatic': player.speed = 4; waveInterval = 80; break;
+  }
+}
+
+function getDiffMult() {
+  switch(difficulty) {
+    case 'easy': return 0.5;
+    case 'normal': return 1;
+    case 'hard': return 1.6;
+    case 'lunatic': return 2.5;
+  }
+}
+
+// --- Power Flash ---
+function showPowerFlash(text, duration) {
+  const pf = document.getElementById('power-flash');
+  document.getElementById('pf-text').textContent = text;
+  pf.style.opacity = 1;
+  pf.style.pointerEvents = 'none';
+  setTimeout(() => { pf.style.opacity = 0; }, duration);
+}
+
+// --- HUD ---
+function updateHUD() {
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('bomb-count').textContent = bombs;
+  const livesEl = document.getElementById('lives-display');
+  livesEl.innerHTML = 'LIVES: ';
+  for (let i = 0; i < lives; i++) livesEl.innerHTML += '<span class="heart">♥</span>';
+  document.getElementById('miracle-bar').style.width = miraclePower + '%';
+}
+
+// --- Bomb / Miracle ---
+function useBomb() {
+  if (gameState !== 'playing') return;
+  if (bombs <= 0) return;
+  bombs--;
+  miracleActive = true;
+  miracleTimer = 300; // 5 seconds at 60fps
+  updateHUD();
+  showBombVN();
+  showPowerFlash("Miracle's Power is Fully Unlocked!\nONE SHOT MODE: 5 SECONDS!", 2200);
+  document.getElementById('miracle-active-flash').style.opacity = 1;
+  // Clear non-boss bullets
+  enemyBullets = [];
+}
+
+function showBombVN() {
+  const bvn = document.getElementById('bomb-vn');
+  document.getElementById('bomb-vn-portrait').src = imgs.assist ? imgs.assist.src : '';
+  bvn.style.display = 'block';
+  setTimeout(() => { bvn.style.display = 'none'; }, 3000);
+}
+
+// --- Shooting ---
+let shootTimer = 0;
+function playerShoot() {
+  if (gameState !== 'playing') return;
+  shootTimer++;
+  if (shootTimer < 5) return;
+  shootTimer = 0;
+  const power = miracleActive ? 4 : (playerPowered ? 3 : 1 + Math.floor(memoriesCollected / 2));
+  const damage = miracleActive ? 9999 : (playerPowered ? 8 : 2 + memoriesCollected * 2);
+  for (let i = 0; i < power; i++) {
+    player.bullets.push({
+      x: player.x + (i - (power-1)/2) * 12,
+      y: player.y - player.h/2,
+      vy: -14, vx: 0, damage, r: 5,
+      color: miracleActive ? '#0ff' : (playerPowered ? '#fa0' : '#fff')
+    });
+  }
+}
+
+// --- Enemy Spawning ---
+function spawnWave() {
+  const dm = getDiffMult();
+  const types = ['zigzag', 'straight', 'circle'];
+  const count = 3 + Math.floor(memoriesCollected * 1.5);
+  for (let i = 0; i < count; i++) {
+    const type = types[Math.floor(Math.random() * types.length)];
+    enemies.push({
+      x: 60 + Math.random() * (canvas.width - 120),
+      y: -30 - i * 40,
+      w: 40, h: 40,
+      hp: Math.ceil((8 + memoriesCollected * 4) * dm),
+      maxHp: Math.ceil((8 + memoriesCollected * 4) * dm),
+      type,
+      phase: Math.random() * Math.PI * 2,
+      speed: (1.2 + Math.random() * 0.8) * dm,
+      shootTimer: Math.floor(Math.random() * 80),
+      shootRate: Math.floor((60 - memoriesCollected * 5) / dm),
+      dead: false
+    });
+  }
+}
+
+function spawnMiniBoss() {
+  const dm = getDiffMult();
+  miniBossActive = true;
+  enemies = [];
+  enemyBullets = [];
+  boss = {
+    x: canvas.width / 2, y: 100, w: 90, h: 90,
+    hp: Math.ceil((120 + miniBossIndex * 80) * dm),
+    maxHp: Math.ceil((120 + miniBossIndex * 80) * dm),
+    phase: 0, timer: 0, type: 'miniboss',
+    dead: false, vx: 1.5 * dm,
+    shootTimer: 0, shootRate: Math.ceil(30 / dm),
+    pattern: miniBossIndex,
+    isMini: true,
+  };
+}
+
+function spawnFinalBoss() {
+  const dm = getDiffMult();
+  bossActive = true;
+  miniBossActive = false;
+  enemies = [];
+  enemyBullets = [];
+  boss = {
+    x: canvas.width / 2, y: 120, w: 110, h: 110,
+    hp: Math.ceil(800 * dm),
+    maxHp: Math.ceil(800 * dm),
+    phase: 0, timer: 0, type: 'finalboss',
+    dead: false, vx: 2 * dm,
+    shootTimer: 0, shootRate: Math.ceil(20 / dm),
+    isMini: false,
+  };
+}
+
+// --- Bullet patterns ---
+function bossShoot(b) {
+  b.shootTimer++;
+  if (b.shootTimer < b.shootRate) return;
+  b.shootTimer = 0;
+  const dm = getDiffMult();
+  const cx = b.x, cy = b.y + b.h/2;
+
+  if (b.isMini) {
+    const count = 8 + b.pattern * 4 + Math.floor(dm * 2);
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + b.phase;
+      enemyBullets.push({ x: cx, y: cy, vx: Math.cos(angle) * (2.5 + dm), vy: Math.sin(angle) * (2.5 + dm), r: 5, color: '#f44', damage: 1 });
+    }
+    b.phase += 0.1;
+  } else {
+    // Final boss: 3 patterns alternating
+    const p = Math.floor(b.timer / 240) % 3;
+    if (p === 0) {
+      for (let i = 0; i < 16 + Math.floor(dm*4); i++) {
+        const angle = (i / (16+Math.floor(dm*4))) * Math.PI * 2 + b.phase;
+        enemyBullets.push({ x: cx, y: cy, vx: Math.cos(angle)*3*dm, vy: Math.sin(angle)*3*dm, r: 6, color: '#f8f', damage: 1 });
+      }
+      b.phase += 0.05;
+    } else if (p === 1) {
+      for (let s = -3; s <= 3; s++) {
+        enemyBullets.push({ x: cx + s*18, y: cy, vx: s*0.3, vy: 4*dm, r: 7, color: '#fa0', damage: 1 });
+      }
+    } else {
+      const dx = player.x - cx, dy = player.y - cy;
+      const dist = Math.sqrt(dx*dx+dy*dy)||1;
+      for (let i = -2; i <= 2; i++) {
+        const spread = i * 0.12;
+        enemyBullets.push({ x: cx, y: cy, vx: (dx/dist)*4*dm + Math.cos(spread)*spread, vy: (dy/dist)*4*dm + Math.sin(spread)*spread, r: 6, color: '#0ff', damage: 1 });
+      }
+    }
+    b.timer++;
+  }
+}
+
+function enemyShoot(e) {
+  e.shootTimer++;
+  if (e.shootTimer < e.shootRate) return;
+  e.shootTimer = 0;
+  const dm = getDiffMult();
+  const dx = player.x - e.x, dy = player.y - e.y;
+  const dist = Math.sqrt(dx*dx+dy*dy)||1;
+  for (let i = -1; i <= 1; i++) {
+    const angle = Math.atan2(dy,dx) + i * 0.25;
+    enemyBullets.push({ x: e.x, y: e.y, vx: Math.cos(angle)*3.5*dm, vy: Math.sin(angle)*3.5*dm, r: 4, color: '#f84', damage: 1 });
+  }
+}
+
+// --- Collision ---
+function circleRect(cx, cy, cr, rx, ry, rw, rh) {
+  const nx = Math.max(rx, Math.min(cx, rx+rw));
+  const ny = Math.max(ry, Math.min(cy, ry+rh));
+  return (cx-nx)*(cx-nx)+(cy-ny)*(cy-ny) < cr*cr;
+}
+
+// --- Hit Flash ---
+let screenFlash = 0;
+
+// --- Memory Show ---
+function showMemory(idx) {
+  const memFlash = document.getElementById('memory-flash');
+  document.getElementById('mem-img').src = imgs[memImages[idx]] ? imgs[memImages[idx]].src : '';
+  memFlash.style.display = 'flex';
+  memFlash.style.opacity = 1;
+  memFlash.style.pointerEvents = 'all';
+  gameState = 'memory';
+  setTimeout(() => {
+    memFlash.style.opacity = 0;
+    memFlash.style.pointerEvents = 'none';
+    setTimeout(() => {
+      memFlash.style.display = 'none';
+      playerPowered = true;
+      powerMultiplier = 1 + memoriesCollected * 0.5;
+      showPowerFlash('POWER UP!\nMemory fills your heart!', 1800);
+      gameState = 'playing';
+    }, 500);
+  }, 2500);
+}
+
+// --- Boss Defeated VN ---
+function showBossVN() {
+  gameState = 'boss_vn';
+  const vno = document.getElementById('vn-overlay');
+  vno.style.display = 'flex';
+  document.getElementById('vn-portrait').src = imgs.princess ? imgs.princess.src : '';
+  document.getElementById('vn-portrait').style.display = 'block';
+  document.getElementById('vn-name').textContent = 'Erin Ranee';
+  document.getElementById('vn-text').textContent = 'You saved me!';
+  document.getElementById('vn-continue').textContent = '▼ Click to continue';
+  vno.onclick = () => {
+    vno.style.display = 'none';
+    vno.onclick = null;
+    showEndScreen(true);
+  };
+}
+
+function showEndScreen(victory) {
+  gameState = 'end';
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('miracle-bar-wrap').style.display = 'none';
+  document.getElementById('music-player').classList.remove('visible');
+  const es = document.getElementById('end-screen');
+  es.style.display = 'flex';
+  const title = es.querySelector('h1');
+  const subtitle = es.querySelector('.end-sub');
+  if (victory) {
+    title.textContent = 'Happy 20th Anniversary!';
+    subtitle.textContent = 'You saved her. You always do.';
+  } else {
+    title.textContent = 'Game Over';
+    subtitle.textContent = 'You fought hard. Try again for the true ending.';
+  }
+}
+
+// --- Music Player Logic ---
+const mpAudioElement = document.getElementById('mp-audio');
+const mpAudio = mpAudioElement || new Audio('9-33. Canto IX Boss 6 Battle Theme.mp3');
+mpAudio.loop = true;
+mpAudio.volume = 0.7;
+mpAudio.muted = false;
+mpAudio.preload = 'auto';
+mpAudio.load();
+mpAudio.addEventListener('loadedmetadata', () => {
+  const note = document.getElementById('mp-note');
+  if (note) note.textContent = 'Music file loaded. Press ▶ if playback is paused.';
+});
+mpAudio.addEventListener('canplaythrough', () => {
+  const note = document.getElementById('mp-note');
+  if (note) note.textContent = 'Music ready. Press ▶ if it does not start automatically.';
+});
+mpAudio.addEventListener('error', () => {
+  const note = document.getElementById('mp-note');
+  if (note) note.textContent = 'Audio file missing or unsupported. Place the .mp3 file in the same folder as this game.';
+});
+
+function mpFmtTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+
+function mpUpdatePlayBtn() {
+  document.getElementById('mp-play-btn').textContent = mpAudio.paused ? '▶' : '⏸';
+}
+
+document.getElementById('mp-play-btn').addEventListener('click', () => {
+  if (mpAudio.paused) {
+    mpAudio.play();
+  } else {
+    mpAudio.pause();
+  }
+  mpUpdatePlayBtn();
+});
+
+document.getElementById('mp-volume').addEventListener('input', e => {
+  mpAudio.volume = parseFloat(e.target.value);
+});
+
+document.getElementById('mp-progress').addEventListener('input', e => {
+  if (mpAudio.duration) {
+    mpAudio.currentTime = (parseFloat(e.target.value) / 100) * mpAudio.duration;
+  }
+});
+
+mpAudio.addEventListener('timeupdate', () => {
+  if (mpAudio.duration) {
+    const pct = (mpAudio.currentTime / mpAudio.duration) * 100;
+    document.getElementById('mp-progress').value = pct;
+    document.getElementById('mp-time').textContent =
+      mpFmtTime(mpAudio.currentTime) + ' / ' + mpFmtTime(mpAudio.duration);
+  }
+});
+
+mpAudio.addEventListener('play', () => {
+  mpUpdatePlayBtn();
+  const note = document.getElementById('mp-note');
+  if (note) note.textContent = 'Music playing.';
+});
+mpAudio.addEventListener('pause', () => {
+  mpUpdatePlayBtn();
+  const note = document.getElementById('mp-note');
+  if (note) note.textContent = 'Music paused. Press ▶ to resume.';
+});
+
+function attemptMusicStart() {
+  if (!mpAudio) return;
+  mpAudio.currentTime = 0;
+  mpAudio.muted = false;
+  mpAudio.play().then(() => {
+    const note = document.getElementById('mp-note');
+    if (note) note.textContent = 'Music playing.';
+  }).catch(() => {
+    const note = document.getElementById('mp-note');
+    if (note) note.textContent = 'Click ▶ if music did not start automatically.';
+  });
+}
+
+// --- Main Game Loop ---
+let lastTime = 0;
+function gameLoop(ts) {
+  const dt = Math.min((ts - lastTime)/16.67, 3);
+  lastTime = ts;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBackground();
+
+  if (gameState === 'playing' || gameState === 'memory') {
+    updatePlayer();
+    updateEnemies();
+    updateBullets();
+    updateParticles();
+    checkCollisions();
+    checkWaveProgress();
+    drawAll();
+    updateMiracle();
+    updateHUD();
+  } else {
+    drawAll();
+  }
+
+  if (screenFlash > 0) {
+    ctx.fillStyle = `rgba(255,100,100,${screenFlash/20})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    screenFlash -= 2;
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+function updatePlayer() {
+  const spd = player.focusing ? player.focusSpeed : player.speed;
+  if (keys['ArrowLeft'] || keys['a']) player.x -= spd;
+  if (keys['ArrowRight'] || keys['d']) player.x += spd;
+  if (keys['ArrowUp'] || keys['w']) player.y -= spd;
+  if (keys['ArrowDown'] || keys['s']) player.y += spd;
+  player.x = Math.max(20, Math.min(canvas.width-20, player.x));
+  player.y = Math.max(20, Math.min(canvas.height-20, player.y));
+  if (keys[' '] || keys['x'] || keys['X']) playerShoot();
+  if (player.iframes > 0) player.iframes--;
+}
+
+function updateMiracle() {
+  if (miracleActive) {
+    miracleTimer--;
+    miraclePower = Math.max(0, (miracleTimer/300)*100);
+    if (miracleTimer <= 0) {
+      miracleActive = false;
+      miraclePower = 0;
+      document.getElementById('miracle-active-flash').style.opacity = 0;
+    }
+  }
+}
+
+function updateEnemies() {
+  for (const e of enemies) {
+    if (e.dead) continue;
+    e.phase = (e.phase||0) + 0.04;
+    if (e.type === 'zigzag') {
+      e.x += Math.sin(e.phase) * 2;
+      e.y += e.speed;
+    } else if (e.type === 'circle') {
+      e.x += Math.cos(e.phase) * 2;
+      e.y += e.speed * 0.7;
+    } else {
+      e.y += e.speed;
+    }
+    enemyShoot(e);
+    if (e.y > canvas.height + 50) e.dead = true;
+  }
+  enemies = enemies.filter(e => !e.dead);
+
+  if (boss && !boss.dead) {
+    boss.x += boss.vx;
+    if (boss.x < 60 || boss.x > canvas.width-60) boss.vx *= -1;
+    bossShoot(boss);
+  }
+}
+
+function updateBullets() {
+  player.bullets = player.bullets.filter(b => {
+    b.x += b.vx; b.y += b.vy;
+    return b.y > -20 && b.x > -20 && b.x < canvas.width+20;
+  });
+  enemyBullets = enemyBullets.filter(b => {
+    b.x += b.vx; b.y += b.vy;
+    return b.y < canvas.height+20 && b.y > -20 && b.x > -20 && b.x < canvas.width+20;
+  });
+}
+
+function updateParticles() {
+  particles = particles.filter(p => {
+    p.x += p.vx; p.y += p.vy; p.life--;
+    p.vx *= 0.95; p.vy *= 0.95;
+    return p.life > 0;
+  });
+}
+
+function checkCollisions() {
+  // Player bullets vs enemies
+  for (const b of player.bullets) {
+    for (const e of enemies) {
+      if (e.dead) continue;
+      if (circleRect(b.x, b.y, b.r, e.x-e.w/2, e.y-e.h/2, e.w, e.h)) {
+        e.hp -= b.damage;
+        b.y = -9999;
+        if (e.hp <= 0) {
+          e.dead = true;
+          score += 100;
+          spawnParticles(e.x, e.y, '#f84', 8);
+        }
+      }
+    }
+    if (boss && !boss.dead) {
+      if (circleRect(b.x, b.y, b.r, boss.x-boss.w/2, boss.y-boss.h/2, boss.w, boss.h)) {
+        const dmg = miracleActive ? 0 : b.damage;
+        boss.hp -= dmg;
+        b.y = -9999;
+        if (!miracleActive) spawnParticles(b.x, b.y, '#fff', 3);
+        if (boss.hp <= 0) { onBossKilled(); }
+      }
+    }
+  }
+
+  // Enemy bullets vs player
+  if (player.iframes <= 0) {
+    const pr = player.focusing ? 4 : 8;
+    for (const b of enemyBullets) {
+      if (circleRect(player.x, player.y, pr, player.x-pr, player.y-pr, pr*2, pr*2)) {
+        const dx = b.x-player.x, dy = b.y-player.y;
+        if (dx*dx+dy*dy < (b.r+pr)*(b.r+pr)) {
+          playerHit();
+          break;
+        }
+      }
+    }
+  }
+}
+
+function playerHit() {
+  lives--;
+  player.iframes = 120;
+  screenFlash = 20;
+  enemyBullets = [];
+  spawnParticles(player.x, player.y, '#fff', 16);
+  updateHUD();
+  if (lives <= 0) {
+    gameState = 'end';
+    showEndScreen();
+  }
+}
+
+function onBossKilled() {
+  boss.dead = true;
+  spawnParticles(boss.x, boss.y, '#ff0', 30);
+  score += boss.isMini ? 500 : 5000;
+  enemyBullets = [];
+
+  if (boss.isMini) {
+    miniBossActive = false;
+    showMemory(miniBossIndex);
+    memoriesCollected++;
+    miniBossIndex++;
+    bossSpawnReady = false;
+    boss = null;
+  } else {
+    bossActive = false;
+    showBossVN();
+  }
+}
+
+let waveCount = 0;
+let enemiesKilledInWave = 0;
+
+function checkWaveProgress() {
+  if (gameState !== 'playing') return;
+  waveTimer++;
+  if (miniBossActive || bossActive) return;
+
+  // Spawn waves normally when no boss is active
+  if (waveTimer % waveInterval === 0 && enemies.length < 8) {
+    spawnWave();
+    waveCount++;
+  }
+
+  // Score-based mini boss triggers at 1000, 2000, 3000, 4000 points
+  if (miniBossIndex < MINI_BOSS_SCORE_THRESHOLDS.length && score >= MINI_BOSS_SCORE_THRESHOLDS[miniBossIndex] && !miniBossActive && !boss) {
+    spawnMiniBoss();
+    return;
+  }
+
+  // Final boss at 5000 after all memories are unlocked
+  if (memoriesCollected >= TOTAL_MEMORIES && score >= FINAL_BOSS_SCORE && !bossActive && !boss) {
+    enemies = [];
+    enemyBullets = [];
+    spawnFinalBoss();
+  }
+}
+
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 3;
+    particles.push({ x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, life: 20+Math.random()*20, color });
+  }
+}
+
+// --- Drawing ---
+let bgStars = [];
+for (let i = 0; i < 120; i++) bgStars.push({ x: Math.random()*1920, y: Math.random()*1080, s: Math.random()*2+0.5, speed: Math.random()*0.5+0.2 });
+
+function drawBackground() {
+  ctx.fillStyle = '#050010';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  for (const s of bgStars) {
+    s.y += s.speed;
+    if (s.y > canvas.height) { s.y = 0; s.x = Math.random()*canvas.width; }
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(200,220,255,${0.4+Math.random()*0.3})`;
+    ctx.fill();
+  }
+}
+
+function drawAll() {
+  // Particles
+  for (const p of particles) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+    ctx.fillStyle = p.color + Math.floor((p.life/40)*255).toString(16).padStart(2,'0');
+    ctx.fill();
+  }
+
+  // Player bullets
+  for (const b of player.bullets) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+    ctx.fillStyle = b.color;
+    ctx.shadowColor = b.color;
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Enemies
+  for (const e of enemies) {
+    if (e.dead) continue;
+    drawEnemySprite(e.x, e.y, e.w, e.h, e.hp/e.maxHp);
+    // HP bar
+    const bw = e.w;
+    ctx.fillStyle = '#300';
+    ctx.fillRect(e.x-bw/2, e.y-e.h/2-8, bw, 4);
+    ctx.fillStyle = '#f44';
+    ctx.fillRect(e.x-bw/2, e.y-e.h/2-8, bw*(e.hp/e.maxHp), 4);
+  }
+
+  // Boss
+  if (boss && !boss.dead) {
+    drawBossSprite(boss);
+    const bw = Math.min(canvas.width * 0.7, 500);
+    const bx = canvas.width/2 - bw/2;
+    const by = canvas.height - 30;
+    ctx.fillStyle = '#300';
+    ctx.fillRect(bx, by, bw, 10);
+    ctx.fillStyle = boss.isMini ? '#f84' : '#f0f';
+    ctx.fillRect(bx, by, bw*(boss.hp/boss.maxHp), 10);
+    ctx.fillStyle = '#fff';
+    ctx.font = '14px Courier New';
+    ctx.fillText(boss.isMini ? 'MINI BOSS' : 'FINAL BOSS', bx, by-6);
+  }
+
+  // Enemy bullets
+  for (const b of enemyBullets) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+    ctx.fillStyle = b.color;
+    ctx.shadowColor = b.color;
+    ctx.shadowBlur = 6;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Player
+  if (gameState === 'playing' || gameState === 'memory') {
+    const alpha = (player.iframes > 0 && Math.floor(player.iframes/4)%2 === 0) ? 0.4 : 1;
+    ctx.globalAlpha = alpha;
+    if (imgs.main && imgs.main.complete && imgs.main.naturalWidth > 0) {
+      ctx.drawImage(imgs.main, player.x-player.w/2, player.y-player.h/2, player.w, player.h);
+    } else {
+      ctx.fillStyle = '#4af';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, 16, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Hitbox dot when focusing
+    if (player.focusing) {
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, 3, 0, Math.PI*2);
+      ctx.fillStyle = '#ff0';
+      ctx.fill();
+    }
+
+    // Power aura
+    if (playerPowered && !miracleActive) {
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, 22, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(255,160,0,${0.4+Math.sin(Date.now()/200)*0.3})`;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+    if (miracleActive) {
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, 28, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(0,255,255,${0.6+Math.sin(Date.now()/100)*0.4})`;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
+  }
+}
+
+function drawEnemySprite(x, y, w, h, hpRatio) {
+  if (imgs.enemy && imgs.enemy.complete && imgs.enemy.naturalWidth > 0) {
+    ctx.drawImage(imgs.enemy, x-w/2, y-h/2, w, h);
+  } else {
+    ctx.fillStyle = '#f44';
+    ctx.fillRect(x-w/2, y-h/2, w, h);
+  }
+}
+
+function drawBossSprite(b) {
+  const size = b.w;
+  if (imgs.enemy && imgs.enemy.complete && imgs.enemy.naturalWidth > 0) {
+    ctx.save();
+    if (!b.isMini) {
+      ctx.shadowColor = '#f0f';
+      ctx.shadowBlur = 20;
+    }
+    ctx.drawImage(imgs.enemy, b.x-size/2, b.y-size/2, size, size);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = b.isMini ? '#f84' : '#f0f';
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, size/2, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+</script>
 </body>
 </html>
